@@ -4,12 +4,14 @@ import { useState } from 'react'
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey'
 import data from './data.json'
 
-const width=700, height=600
+const width = 700, height = 600
 
 const SankeyNode = ({ name, x0, x1, y0, y1, color }) => (
-  <rect x={x0} y={y0} width={x1 - x0} height={y1 - y0} fill={color}>
-    <title>{name}</title>
-  </rect>
+  <>
+    <rect x={x0} y={y0} width={x1 - x0} height={y1 - y0} fill={color}/>
+    <text x={x0 < width / 2 ? x1 + 6 : x0 - 60} y={((y1 + y0) / 2)+5} fontSize={10} fill={"black"}>{name}</text>
+
+  </>
 )
 
 const SankeyLink = ({ link, color }) => (
@@ -36,7 +38,7 @@ function App() {
 
   return (
     <div className="App">
-       <svg width={width} height={height} style={{padding:50}}>
+      <svg width={width} height={height} style={{ padding: 50 }}>
         <g style={{ mixBlendMode: 'multiply' }}>
           {data_graph.nodes.map((node, i) => (
             <SankeyNode
@@ -51,7 +53,7 @@ function App() {
             />
           ))}
         </g>
-        </svg>
+      </svg>
     </div>
   );
 }
@@ -84,7 +86,7 @@ const generateGraph = (sankeyNodes, output_var) => {
   Object.keys(rels).map((first) => {
     Object.keys(rels[first]).map(second => {
       let rel_val = rels[first][second].sum / rels[first][second].count
-      links.push({ "source": nodes.indexOf(first), "target": nodes.indexOf(second), "value":  rels[first][second].count})
+      links.push({ "source": nodes.indexOf(first), "target": nodes.indexOf(second), "value": rels[first][second].count })
     })
   })
   var res_nodes = []
