@@ -9,7 +9,7 @@ const width = 700, height = 600
 const SankeyNode = ({ name, x0, x1, y0, y1, color }) => (
   <>
     <rect x={x0} y={y0} width={x1 - x0} height={y1 - y0} fill={color}/>
-    <text x={x0 < width / 2 ? x1 + 6 : x0 - 60} y={((y1 + y0) / 2)+5} fontSize={10} fill={"black"}>{name}</text>
+    <text x={x0 < width / 2 ? x1 + 6 : x0 - 40} y={((y1 + y0) / 2)+5} fontSize={15} fill={"black"}>{name}</text>
 
   </>
 )
@@ -58,11 +58,14 @@ function App() {
   );
 }
 
+//"RD (%)" will be divided into 10 categories: 90, 91, .. 99
 const generateGraph = (sankeyNodes, output_var) => {
   var rels = {}
   var nodes = []
   for (let i = 0; i < sankeyNodes.length - 1; i++) {
     for (let node of data) {
+      if(!Number(node[output_var]))
+        continue
       let first = node[sankeyNodes[i]]
       let second = node[sankeyNodes[i + 1]]
       if (!(nodes.includes("" + first)))
@@ -87,10 +90,16 @@ const generateGraph = (sankeyNodes, output_var) => {
     Object.keys(rels[first]).map(second => {
       let rel_val = rels[first][second].sum / rels[first][second].count
       links.push({ "source": nodes.indexOf(first), "target": nodes.indexOf(second), "value": rels[first][second].count })
+      
+      links.push({ "source": nodes.indexOf(second), "target": nodes.length + (Math.abs(90-rel_val)|0), "value": rels[first][second].count  })
+      console.log(nodes.length-1 + (Math.abs(90-rel_val)|0))
+      console.log("r_val:" + rel_val)
     })
   })
   var res_nodes = []
   nodes.map(node => res_nodes.push({ "name": node }))
+  for(let i = 90; i < 100; i++)
+    res_nodes.push({"name": i + "%"})
   return { "nodes": res_nodes, "links": links }
 }
 
