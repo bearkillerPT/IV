@@ -3,6 +3,7 @@
   display: flex;
   align-items: center;
   flex-direction: column;
+  justify-content: center;
 }
 .graphControlls{
   display: flex;
@@ -11,13 +12,14 @@
   padding-bottom: 3vh;
   width: 50%;
 }
-.Graph{
-  max-width: 90%;
-}
 .paramSelect{
   flex:1;
   max-width: 50%;
   border-radius: 2vh;
+}
+.Graph{
+  display: flex;
+  justify-content: center;
 }
 .GraphHeader{
   display: flex;

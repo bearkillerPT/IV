@@ -10,7 +10,7 @@ const { innerWidth: width, innerHeight: height } = window;
 const SankeyNode = ({ name, x0, x1, y0, y1, color }) => (
   <>
     <rect x={x0} y={y0} width={x1 - x0} height={y1 - y0} fill={color} />
-    <text x={x0 < width / 2 ? x1 + 6 : x0 - 40} y={((y1 + y0) / 2) + 5} fontSize={15} fill={"black"}>{name}</text>
+    <text x={x0 < (width) / 2 ? x1 + 6 : x0 - 40} y={((y1 + y0) / 2) + 5} fontSize={15} fill={"black"}>{name}</text>
 
   </>
 )
@@ -46,7 +46,7 @@ function App() {
     const { nodes, links } = sankey()
       .nodeWidth(15)
       .nodePadding(10)
-      .extent([[1, 1], [width - 1, height - 5]])(dataGraph);
+      .extent([[1, 1], [(width > 800 ? 800 : width) - 1, height - 5]])(dataGraph);
 
     return (
       <div className="App">
@@ -55,25 +55,28 @@ function App() {
           <div class="GraphHeader">
             <p class="GraphTitle">Alluvial Plot</p>
           </div>
-          <svg class="Graph" width={width} height={height} style={{ padding: 50 }}>
-            <g style={{ mixBlendMode: 'multiply' }}>
-              {dataGraph.nodes.map((node, i) => (
-                <SankeyNode
-                  {...node}
-                  key={i}
-                  color={color(colorScale(i)).hex()}
-                />
-              ))}
-              {dataGraph.links.map((link, i) => (
-                <SankeyLink
-                  link={link}
-                  key={i}
-                  color={color(colorScale(link.source.index)).hex()}
+          <div class="Graph">
+            <svg width={(width>800?800:width)} height={height} style={{ padding: 50 }}>
+              <g style={{ mixBlendMode: 'multiply' }}>
+                {dataGraph.nodes.map((node, i) => (
+                  <SankeyNode
+                    {...node}
+                    key={i}
+                    color={color(colorScale(i)).hex()}
+                  />
+                ))}
+                {dataGraph.links.map((link, i) => (
+                  <SankeyLink
+                    link={link}
+                    key={i}
+                    color={color(colorScale(link.source.index)).hex()}
 
-                />
-              ))}
-            </g>
-          </svg>
+                  />
+                ))}
+              </g>
+            </svg>
+          </div>
+
           <div class="graphControlls">
             <div>
               <p>1st paramether</p>
