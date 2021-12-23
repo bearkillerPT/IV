@@ -12,7 +12,7 @@ function Header({value}) {
 }
 ReactDOM.render(
   <React.StrictMode>
-    <Header value="Techincal Ceramics analisys"/>
+    <Header value="Technical Ceramics analisys"/>
 
     <App />
   </React.StrictMode>,
