@@ -14,12 +14,12 @@ code {
 
 .Header{
   display: flex;
-  background-color: #8F8F88;
+  background-color: #333333;
   width: 100%;
   justify-content: center;
 }
 .HeaderP{
-  color: #f3f3eb;
+  color: #f3f3ebb4;
   font-size: larger;
 }
 .App{

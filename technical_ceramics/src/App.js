@@ -22,7 +22,7 @@ const SankeyLink = ({ link, color }) => (
     d={sankeyLinkHorizontal()(link)}
     style={{
       fill: 'none',
-      strokeOpacity: '.3',
+      strokeOpacity: '.5',
       stroke: color,
       strokeWidth: Math.max(1, link.width),
     }}
@@ -53,6 +53,9 @@ function App() {
       <div className="App">
 
         <div class="sankeyGraph">
+          <div class="GraphHeader">
+            <p class="GraphTitle">Aluvial Plot</p>
+          </div>
         <svg width={width} height={height} style={{ padding: 50 }}>
           <g style={{ mixBlendMode: 'multiply' }}>
             {dataGraph.nodes.map((node, i) => (
