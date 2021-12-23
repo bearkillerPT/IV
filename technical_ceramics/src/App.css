@@ -9,10 +9,14 @@
   justify-content: space-between;
   align-items: center;
   padding-bottom: 3vh;
+  width: 50%;
+}
+.Graph{
+  max-width: 90%;
 }
 .paramSelect{
   flex:1;
-  max-width: 20vh;
+  max-width: 50%;
   border-radius: 2vh;
 }
 .GraphHeader{
