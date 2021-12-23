@@ -39,7 +39,6 @@ function App() {
   setDataGraph(generateGraph([sankey1, sankey2], "RD (%)")) 
   }, [sankey1, sankey2])
   if(dataGraph) {
-    console.log(dataGraph.links)
     const layout = sankey()(dataGraph)
     const color = chroma.scale("Set3").classes(dataGraph.nodes.length);
     const colorScale = d3.scaleLinear()
@@ -104,13 +103,17 @@ const generateGraph = (sankeyNodes, output_var) => {
   var nodes = []
   for (let i = 0; i < sankeyNodes.length - 1; i++) {
     for (let node of data) {
-      if(!Number(node[output_var]) && !String(node[output_var]))
+      if(!Number(node[output_var]))
         continue
       let first = node[sankeyNodes[i]]
       let second = node[sankeyNodes[i + 1]]
+      if(sankeyNodes[i] != "Year" && Number(first) && first>10) 
+        first -= first % 10
+      if(sankeyNodes[i+1] != "Year" && Number(second) && second>10) 
+        second -= second % 10
       if (!(nodes.includes("" + first)))
         nodes.push("" + first)
-      else if (!(nodes.includes("" + second)))
+      if (!(nodes.includes("" + second)))
         nodes.push("" + second)
       if (!(first in rels))
         rels[first] = {}
@@ -129,11 +132,10 @@ const generateGraph = (sankeyNodes, output_var) => {
   Object.keys(rels).map((first) => {
     Object.keys(rels[first]).map(second => {
       let rel_val = rels[first][second].sum / rels[first][second].count
-      links.push({ "source": nodes.indexOf(first), "target": nodes.indexOf(second), "value": rels[first][second].count })
+      links.push({ "source": nodes.indexOf("" + first), "target": nodes.indexOf("" + second), "value": rels[first][second].count })
       
-      links.push({ "source": nodes.indexOf(second), "target": nodes.length + (Math.abs(90-rel_val)|0), "value": rels[first][second].count  })
-      console.log(nodes.length-1 + (Math.abs(90-rel_val)|0))
-      console.log("r_val:" + rel_val)
+      links.push({ "source": nodes.indexOf("" + second), "target": nodes.length + (Math.abs(90-rel_val)|0), "value": rels[first][second].count  })
+
     })
   })
   var res_nodes = []
