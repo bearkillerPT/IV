@@ -30,6 +30,7 @@ const SankeyLink = ({ link, color }) => (
 )
 
 
+
 function App() {
   const [sankey1, setSakey1] = useState("Year")
   const [sankey2, setSakey2] = useState("Technology")
@@ -51,6 +52,7 @@ function App() {
   
     return (
       <div className="App">
+
         <div class="sankeyGraph">
         <svg width={width} height={height} style={{ padding: 50 }}>
           <g style={{ mixBlendMode: 'multiply' }}>

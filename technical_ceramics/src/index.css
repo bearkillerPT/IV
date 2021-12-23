@@ -12,24 +12,22 @@ code {
     monospace;
 }
 
+.Header{
+  display: flex;
+  background-color: #8F8F88;
+  width: 100%;
+  justify-content: center;
+}
+.HeaderP{
+  color: #f3f3eb;
+  font-size: larger;
+}
 .App{
   display: flex;
   justify-content: space-around;
   align-items: center;
-}
-.sankeyGraph{
-  display: flex;
-  align-items: center;
   flex-direction: column;
 }
-.graphControlls{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 3vh;
-}
-.paramSelect{
-  flex:1;
-  max-width: 20vh;
-  border-radius: 2vh;
+body{
+  background-color: #CFCFC4;
 }
