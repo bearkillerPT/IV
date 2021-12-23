@@ -1,10 +1,12 @@
 import logo from './logo.svg';
 import './App.css';
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import * as d3 from "d3";
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey'
 import data from './data.json'
+import chroma from "chroma-js";
 
-const width = 700, height = 600
+const width = 600, height = 400
 
 const SankeyNode = ({ name, x0, x1, y0, y1, color }) => (
   <>
@@ -14,48 +16,84 @@ const SankeyNode = ({ name, x0, x1, y0, y1, color }) => (
   </>
 )
 
+
 const SankeyLink = ({ link, color }) => (
   <path
     d={sankeyLinkHorizontal()(link)}
     style={{
       fill: 'none',
       strokeOpacity: '.3',
-      stroke: '#000',
+      stroke: color,
       strokeWidth: Math.max(1, link.width),
     }}
   />
 )
 
+
 function App() {
-  const [sankeyNodes, setSankeyNodes] = useState(["Year", "Technology"])
-  var data_graph = generateGraph(sankeyNodes, "RD (%)")
-  const layout = sankey()(data_graph)
+  const [sankey1, setSakey1] = useState("Year")
+  const [sankey2, setSakey2] = useState("Technology")
+  const [dataGraph, setDataGraph] = useState(null)
+  useEffect(()=>{
+  setDataGraph(generateGraph([sankey1, sankey2], "RD (%)")) 
+  }, [sankey1, sankey2])
+  if(dataGraph) {
+    console.log(dataGraph.links)
+    const layout = sankey()(dataGraph)
+    const color = chroma.scale("Set3").classes(dataGraph.nodes.length);
+    const colorScale = d3.scaleLinear()
+      .domain([0, dataGraph.nodes.length])
+      .range([0, 1]);
+    const { nodes, links } = sankey()
+      .nodeWidth(15)
+      .nodePadding(10)
+      .extent([[1, 1], [width - 1, height - 5]])(dataGraph);
+  
+    return (
+      <div className="App">
+        <div class="sankeyGraph">
+        <svg width={width} height={height} style={{ padding: 50 }}>
+          <g style={{ mixBlendMode: 'multiply' }}>
+            {dataGraph.nodes.map((node, i) => (
+              <SankeyNode
+                {...node}
+                key={i}
+                color={color(colorScale(i)).hex()}
+              />
+            ))}
+            {dataGraph.links.map((link, i) => (
+              <SankeyLink
+                link={link}
+                key={i}
+                color={color(colorScale(link.source.index)).hex()}
+  
+              />
+            ))}
+          </g>
+        </svg>
+        <div class="graphControlls">
+          <select value={sankey1} class="paramSelect" onChange={key=>{setSakey1(key.currentTarget.value)}}>
+            {Object.keys(data[0]).map((key,i) => {
+            return <option value={key} key={i}>{key}</option>
+            })
+            }
+          </select>
+          <select value={sankey2} class="paramSelect" onChange={key=>{setSakey2(key.currentTarget.value)}}>
+          {Object.keys(data[0]).map((key,i) => {
+            if(key != sankey1)
+              return <option value={key} key={i}>{key}</option>
+            })
+            }
+          </select>
+        </div>
+        </div>
+      </div>
+    );  
 
-  const { nodes, links } = sankey()
-    .nodeWidth(15)
-    .nodePadding(10)
-    .extent([[1, 1], [width - 1, height - 5]])(data_graph);
-
-  return (
-    <div className="App">
-      <svg width={width} height={height} style={{ padding: 50 }}>
-        <g style={{ mixBlendMode: 'multiply' }}>
-          {data_graph.nodes.map((node, i) => (
-            <SankeyNode
-              {...node}
-              key={i}
-            />
-          ))}
-          {data_graph.links.map((link, i) => (
-            <SankeyLink
-              link={link}
-              key={i}
-            />
-          ))}
-        </g>
-      </svg>
-    </div>
-  );
+  }
+  else{
+    return(<div></div>);
+  }  
 }
 
 //"RD (%)" will be divided into 10 categories: 90, 91, .. 99
@@ -64,7 +102,7 @@ const generateGraph = (sankeyNodes, output_var) => {
   var nodes = []
   for (let i = 0; i < sankeyNodes.length - 1; i++) {
     for (let node of data) {
-      if(!Number(node[output_var]))
+      if(!Number(node[output_var]) && !String(node[output_var]))
         continue
       let first = node[sankeyNodes[i]]
       let second = node[sankeyNodes[i + 1]]
