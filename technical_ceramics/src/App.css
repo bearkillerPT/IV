@@ -40,7 +40,7 @@
   border-radius: 2vh;
 }
 .Graph{
-  display: flex;
+  flex:1;
   justify-content: center;
 }
 .GraphHeader{

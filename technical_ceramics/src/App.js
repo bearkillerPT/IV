@@ -78,7 +78,7 @@ function App() {
             <p className="GraphTitle">Alluvial Plot</p>
           </div>
           <div className="Graph">
-            <svg width={(width > 800 ? 800 : width)} height={height} style={{ padding: 15 }}>
+            <svg width={(width > 800 ? 800 : width)} height={height}>
               <g style={{ mixBlendMode: 'multiply' }}>
                 {dataGraph.nodes.map((node, i) => (
                   <SankeyNode
