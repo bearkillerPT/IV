@@ -41,6 +41,7 @@
 }
 .Graph{
   flex:1;
+  max-width: 800;
   justify-content: center;
 }
 .GraphHeader{
