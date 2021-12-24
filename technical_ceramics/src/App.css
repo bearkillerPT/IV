@@ -18,9 +18,10 @@
   background-color: #555555;
   text-align: justify;
   text-justify: inter-word;
-  width: 98%;
+  width: 95%;
   border-radius: 2vh;
-  padding-left: 2vh;
+  padding-right: 1vh;
+  padding-left: 1vh;
 }
 .IntroP{
   width: 100%;
