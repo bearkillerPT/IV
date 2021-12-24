@@ -5,8 +5,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 function Header({value}) {
   return(
-    <div class="Header">
-      <p class="HeaderP">{value}</p>
+    <div className="Header">
+      <p className="HeaderP">{value}</p>
     </div>
   );
 }

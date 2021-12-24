@@ -51,11 +51,11 @@ function App() {
     return (
       <div className="App">
 
-        <div class="sankeyGraph">
-          <div class="GraphHeader">
-            <p class="GraphTitle">Alluvial Plot</p>
+        <div className="sankeyGraph">
+          <div className="GraphHeader">
+            <p className="GraphTitle">Alluvial Plot</p>
           </div>
-          <div class="Graph">
+          <div className="Graph">
             <svg width={(width>800?800:width)} height={height} style={{ padding: 50 }}>
               <g style={{ mixBlendMode: 'multiply' }}>
                 {dataGraph.nodes.map((node, i) => (
@@ -77,11 +77,12 @@ function App() {
             </svg>
           </div>
 
-          <div class="graphControlls">
+          <div className="graphControlls">
             <div>
               <p>1st paramether</p>
-              <select value={sankey1} class="paramSelect" onChange={key => { setSakey1(key.currentTarget.value) }}>
+              <select value={sankey1} className="paramSelect" onChange={key => { setSakey1(key.currentTarget.value) }}>
                 {Object.keys(data[0]).map((key, i) => {
+                  if (key != sankey2 && key != "RD (%)")
                   return <option value={key} key={i}>{key}</option>
                 })
                 }
@@ -89,9 +90,9 @@ function App() {
             </div>
             <div>
               <p>2nd paramether</p>
-              <select value={sankey2} class="paramSelect" onChange={key => { setSakey2(key.currentTarget.value) }}>
+              <select value={sankey2} className="paramSelect" onChange={key => { setSakey2(key.currentTarget.value) }}>
                 {Object.keys(data[0]).map((key, i) => {
-                  if (key != sankey1)
+                  if (key != sankey1 && key != "RD (%)")
                     return <option value={key} key={i}>{key}</option>
                 })
                 }
@@ -118,6 +119,8 @@ const generateGraph = (sankeyNodes, output_var) => {
         continue
       let first = node[sankeyNodes[i]]
       let second = node[sankeyNodes[i + 1]]
+      if (first == "" || second == "")
+        continue
       if (sankeyNodes[i] != "Year" && Number(first) && first > 10)
         first -= first % 10
       if (sankeyNodes[i + 1] != "Year" && Number(second) && second > 10)
