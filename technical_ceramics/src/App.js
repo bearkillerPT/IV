@@ -5,6 +5,7 @@ import * as d3 from "d3";
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey'
 import data from './data.json'
 import chroma from "chroma-js";
+import { max } from 'd3';
 const { innerWidth: width, innerHeight: height } = window;
 
 const SankeyNode = ({ name, x0, x1, y0, y1, color }) => (
@@ -44,6 +45,7 @@ function App() {
   useEffect(() => {
     setDataGraph(generateGraph([sankey1, sankey2], "RD (%)"))
   }, [sankey1, sankey2])
+  const max_width = (width > 800 ? 800 : width)
   if (dataGraph) {
     const layout = sankey()(dataGraph)
     const color = chroma.scale("Set3").classes(dataGraph.nodes.length);
@@ -53,14 +55,14 @@ function App() {
     const { nodes, links } = sankey()
       .nodeWidth(15)
       .nodePadding(10)
-      .extent([[1, 1], [(width > 800 ? 800 : width) - 1, height - 5]])(dataGraph);
+      .extent([[1, 1], [max_width - 1, height - 5]])(dataGraph);
     const xScale = d3.scaleLinear()
-      .domain(d3.extent(data, d => d[scatter]))
-      .range([0, (width > 800 ? 800 : width)]);
+      .domain(d3.extent(data, d => { if (Number(d[scatter])) return Number(d[scatter]) }))
+      .range([25, max_width - 50]);
 
     const yScale = d3.scaleLinear()
-      .domain(d3.extent(data, d => d.y))
-      .range([height, 0]);
+      .domain(d3.extent(data, d => Number(d["RD (%)"])))
+      .range([0, height]);
     return (
       <div className="App">
         <div className='Intro'>
@@ -127,28 +129,48 @@ function App() {
           <div className="GraphHeader">
             <p className="GraphTitle">Scatter Plot (not yet implemented)</p>
           </div>
-          <div className="Graph">
-            <svg width={(width > 800 ? 800 : width)} height={height}>
-              <g transform={`translate(${margin.left},${margin.top})`}>
-                {data.map((circle, i) => {
-                  console.log(circle)
-                  if (Number(circle["RD (%)"]))
-                    return (<div key={i}>
-                      <AxisLeft yScale={yScale} width={width} />
-                      <AxisBottom xScale={xScale} height={height} />
-                      <circle
-                        r={5}
-                        cx={xScale(circle[scatter])}
-                        cy={yScale(circle["RD (%)"])}
-                        style={{ fill: "black" }}
-                      />
-                    </div>);
+          <div className='Graph' >
+            <svg width={max_width} height={height + 50} >
+              <g >
 
-                })}
+                <AxisLeft yScale={yScale} />
+                <AxisBottom xScale={xScale} height={height} />
+                <g >
+                  {data.map((circle, i) => {
+                    console.log(circle)
+                    if (Number(circle["RD (%)"]))
+                      return (
+                        <circle
+                          r={5}
+                          cx={xScale(circle[scatter])}
+                          cy={yScale(circle["RD (%)"])}
+                          style={{ fill: 'black' }}
+                          key={i}
+                        />);
+                    else {
+                      return (<></>);
+                    }
+                  })}
+                </g>
               </g>
             </svg>
           </div>
-
+          <div className="GraphControlls">
+            <div className="ParamSelect">
+              <p>Y-axis:</p>
+              <p>RD  %</p>
+            </div>
+            <div>
+              <p>X-axis:</p>
+              <select value={scatter} className="ParamSelect" onChange={key => { setScatter(key.currentTarget.value) }}>
+                {Object.keys(data[0]).map((key, i) => {
+                  if (key != "RD (%)")
+                    return <option value={key} key={i}>{key}</option>
+                })
+                }
+              </select>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -210,12 +232,12 @@ const generateGraph = (sankeyNodes, output_var) => {
 }
 
 function AxisLeft({ yScale, width }) {
-  const textPadding = -20
+  const textPadding = -1
 
-  const axis = yScale.ticks(5).map((d, i) => (
+  const axis = yScale.ticks(10).map((d, i) => (
     <g key={i} className="y-tick">
       <line
-        style={{ stroke: "#e4e5eb" }}
+        style={{ stroke: "black" }}
         y1={yScale(d)}
         y2={yScale(d)}
         x1={0}
@@ -224,7 +246,7 @@ function AxisLeft({ yScale, width }) {
       <text
         style={{ fontSize: 12 }}
         x={textPadding}
-        dy=".32em"
+        dy=".71em"
         y={yScale(d)}
       >
         {d}
@@ -239,14 +261,14 @@ function AxisBottom({ xScale, height }) {
   const axis = xScale.ticks(10).map((d, i) => (
     <g className="x-tick" key={i}>
       <line
-        style={{ stroke: "#e4e5eb" }}
+        style={{ stroke: "black" }}
         y1={0}
         y2={height}
         x1={xScale(d)}
         x2={xScale(d)}
       />
       <text
-        style={{ textAnchor: "middle", fontSize: 20 }}
+        style={{ fontSize: '2vh' }}
         dy=".71em"
         x={xScale(d)}
         y={height + textPadding}
