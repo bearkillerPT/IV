@@ -46,6 +46,7 @@ function App() {
     setDataGraph(generateGraph([sankey1, sankey2], "RD (%)"))
   }, [sankey1, sankey2])
   const max_width = (width > 800 ? 800 : width)
+  const max_height = height > 500 ? 500: height
   if (dataGraph) {
     const layout = sankey()(dataGraph)
     const color = chroma.scale("Set3").classes(dataGraph.nodes.length);
@@ -62,7 +63,7 @@ function App() {
 
     const yScale = d3.scaleLinear()
       .domain(d3.extent(data, d => Number(d["RD (%)"])))
-      .range([0, height]);
+      .range([0, max_height]);
     return (
       <div className="App">
         <div className='Intro'>
@@ -129,12 +130,12 @@ function App() {
           <div className="GraphHeader">
             <p className="GraphTitle">Scatter Plot (not yet implemented)</p>
           </div>
-          <div className='Graph' >
-            <svg width={max_width} height={height + 50} >
+          <div id="scatter" className='Graph' >
+            <svg width={max_width} height={max_height + 50} >
               <g >
 
                 <AxisLeft yScale={yScale} />
-                <AxisBottom xScale={xScale} height={height} />
+                <AxisBottom xScale={xScale} height={max_height} />
                 <g >
                   {data.map((circle, i) => {
                     console.log(circle)
