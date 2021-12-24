@@ -27,10 +27,17 @@ const SankeyLink = ({ link, color }) => (
     }}
   />
 )
+const margin = {
+  top: 40,
+  bottom: 40,
+  left: 40,
+  right: 40
+};
 
 
 
 function App() {
+  const [scatter, setScatter] = useState("Year")
   const [sankey1, setSakey1] = useState("Year")
   const [sankey2, setSakey2] = useState("Technology")
   const [dataGraph, setDataGraph] = useState(null)
@@ -47,16 +54,31 @@ function App() {
       .nodeWidth(15)
       .nodePadding(10)
       .extent([[1, 1], [(width > 800 ? 800 : width) - 1, height - 5]])(dataGraph);
+    const xScale = d3.scaleLinear()
+      .domain(d3.extent(data, d => d[scatter]))
+      .range([0, (width > 800 ? 800 : width)]);
 
+    const yScale = d3.scaleLinear()
+      .domain(d3.extent(data, d => d.y))
+      .range([height, 0]);
     return (
       <div className="App">
+        <div className='Intro'>
+          <p className="IntroP">A visual analisys of multiple ways that techincal ceramics are made. The porpuse of this website is to enable any type of user to take conclusions on which is the most effective manufacturing process!</p>
+          <p className="IntroP">
+            The production of technical ceramics as a lof of variants. Diferent percentages of Al and Zr, the technology, the year, this are all variables that the user might control and relate.
+          </p>
+          <p className="IntroP">
+            This project was developed for the University of Aveiro in the context of the Information Visualization discipline.
+          </p>
+        </div>
 
-        <div className="sankeyGraph">
+        <div className="SankeyGraph">
           <div className="GraphHeader">
             <p className="GraphTitle">Alluvial Plot</p>
           </div>
           <div className="Graph">
-            <svg width={(width>800?800:width)} height={height} style={{ padding: 50 }}>
+            <svg width={(width > 800 ? 800 : width)} height={height} style={{ padding: 50 }}>
               <g style={{ mixBlendMode: 'multiply' }}>
                 {dataGraph.nodes.map((node, i) => (
                   <SankeyNode
@@ -77,20 +99,20 @@ function App() {
             </svg>
           </div>
 
-          <div className="graphControlls">
+          <div className="GraphControlls">
             <div>
               <p>1st paramether</p>
-              <select value={sankey1} className="paramSelect" onChange={key => { setSakey1(key.currentTarget.value) }}>
+              <select value={sankey1} className="ParamSelect" onChange={key => { setSakey1(key.currentTarget.value) }}>
                 {Object.keys(data[0]).map((key, i) => {
                   if (key != sankey2 && key != "RD (%)")
-                  return <option value={key} key={i}>{key}</option>
+                    return <option value={key} key={i}>{key}</option>
                 })
                 }
               </select>
             </div>
             <div>
               <p>2nd paramether</p>
-              <select value={sankey2} className="paramSelect" onChange={key => { setSakey2(key.currentTarget.value) }}>
+              <select value={sankey2} className="ParamSelect" onChange={key => { setSakey2(key.currentTarget.value) }}>
                 {Object.keys(data[0]).map((key, i) => {
                   if (key != sankey1 && key != "RD (%)")
                     return <option value={key} key={i}>{key}</option>
@@ -99,6 +121,34 @@ function App() {
               </select>
             </div>
           </div>
+        </div>
+        <div className="ScatterGraph">
+
+          <div className="GraphHeader">
+            <p className="GraphTitle">Scatter Plot (not yet implemented)</p>
+          </div>
+          <div className="Graph">
+            <svg width={(width > 800 ? 800 : width)} height={height}>
+              <g transform={`translate(${margin.left},${margin.top})`}>
+                {data.map((circle, i) => {
+                  console.log(circle)
+                  if (Number(circle["RD (%)"]))
+                    return (<div key={i}>
+                      <AxisLeft yScale={yScale} width={width} />
+                      <AxisBottom xScale={xScale} height={height} />
+                      <circle
+                        r={5}
+                        cx={xScale(circle[scatter])}
+                        cy={yScale(circle["RD (%)"])}
+                        style={{ fill: "black" }}
+                      />
+                    </div>);
+
+                })}
+              </g>
+            </svg>
+          </div>
+
         </div>
       </div>
     );
@@ -159,4 +209,52 @@ const generateGraph = (sankeyNodes, output_var) => {
   return { "nodes": res_nodes, "links": links }
 }
 
+function AxisLeft({ yScale, width }) {
+  const textPadding = -20
+
+  const axis = yScale.ticks(5).map((d, i) => (
+    <g key={i} className="y-tick">
+      <line
+        style={{ stroke: "#e4e5eb" }}
+        y1={yScale(d)}
+        y2={yScale(d)}
+        x1={0}
+        x2={width}
+      />
+      <text
+        style={{ fontSize: 12 }}
+        x={textPadding}
+        dy=".32em"
+        y={yScale(d)}
+      >
+        {d}
+      </text>
+    </g>
+  ));
+  return <>{axis}</>;
+}
+function AxisBottom({ xScale, height }) {
+  const textPadding = 10;
+
+  const axis = xScale.ticks(10).map((d, i) => (
+    <g className="x-tick" key={i}>
+      <line
+        style={{ stroke: "#e4e5eb" }}
+        y1={0}
+        y2={height}
+        x1={xScale(d)}
+        x2={xScale(d)}
+      />
+      <text
+        style={{ textAnchor: "middle", fontSize: 20 }}
+        dy=".71em"
+        x={xScale(d)}
+        y={height + textPadding}
+      >
+        {d}
+      </text>
+    </g>
+  ));
+  return <>{axis}</>;
+}
 export default App;

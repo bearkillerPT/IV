@@ -1,18 +1,40 @@
 
-.sankeyGraph{
+.SankeyGraph{
   display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: center;
 }
-.graphControlls{
+.SankeyGraph{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+.Intro{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: #555555;
+  text-align: justify;
+  text-justify: inter-word;
+  width: 96%;
+  border-radius: 2vh;
+  padding-left: 10vh;
+}
+.IntroP{
+  width: 100%;
+  font-size: 2vh;
+  color: #f3f3eb;
+}
+.GraphControlls{
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 3vh;
   width: 50%;
 }
-.paramSelect{
+.ParamSelect{
   flex:1;
   max-width: 50%;
   border-radius: 2vh;
@@ -24,9 +46,11 @@
 .GraphHeader{
   display: flex;
   width: 100%;
-  background-color: #555555;
+  background-color: #333333;
   justify-content: center;
   align-items: center;
+  margin-bottom: 0.5vh;
+  margin-top: 0.5vh;
   
 }
 .GraphTitle{
