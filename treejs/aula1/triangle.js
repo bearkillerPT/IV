@@ -42,7 +42,7 @@ const renderTriangle = () => {
     ]);
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3, true));
     const geometryMaterial = new THREE.MeshBasicMaterial({ vertexColors: THREE.VertexColors, side: THREE.DoubleSide });
-    var outlineMaterial1 = new THREE.MeshBasicMaterial({ color: "white", wireframe: true });
+    const outlineMaterial1 = new THREE.MeshBasicMaterial({ color: "white", wireframe: true });
     const triangle = new THREE.Mesh(geometry, geometryMaterial);
     const triangleoOutline = new THREE.Mesh(hiddenTriangle, outlineMaterial1);
 
