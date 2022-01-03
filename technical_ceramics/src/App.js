@@ -57,7 +57,7 @@ function App() {
       .nodeWidth(15)
       .nodePadding(10)
       .extent([[1, 1], [max_width - 1, height - 5]])
-      .nodeSort((a,b)=>{if(a.index==b.index)return 0; else if(a.index<b.index) return -1; else return 1})(dataGraph);
+      .nodeSort((a,b)=>{console.log(a,b); if(a.name==b.name)return 0; else if(a.name<b.name) return 1; else return -1})(dataGraph);
     const xScale = d3.scaleLinear()
       .domain(d3.extent(data, d => { if (Number(d[scatter])) return Number(d[scatter]) }))
       .range([25, max_width - 50]);
@@ -82,7 +82,7 @@ function App() {
             <p className="GraphTitle">Alluvial Plot</p>
           </div>
           <div className="Graph">
-            <svg width={(width > 800 ? 830 : width)} height={height}>
+            <svg width={(width > 800 ? 850 : width)} height={height}>
               <g style={{ mixBlendMode: 'multiply' }}>
                 {dataGraph.nodes.map((node, i) => (
                   <SankeyNode
@@ -139,7 +139,6 @@ function App() {
                 <AxisBottom xScale={xScale} height={max_height} />
                 <g >
                   {data.map((circle, i) => {
-                    console.log(circle)
                     if (Number(circle["RD (%)"]))
                       return (
                         <circle
