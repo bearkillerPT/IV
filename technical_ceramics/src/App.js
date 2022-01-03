@@ -56,7 +56,8 @@ function App() {
     const { nodes, links } = sankey()
       .nodeWidth(15)
       .nodePadding(10)
-      .extent([[1, 1], [max_width - 1, height - 5]])(dataGraph);
+      .extent([[1, 1], [max_width - 1, height - 5]])
+      .nodeSort((a,b)=>{if(a.index==b.index)return 0; else if(a.index<b.index) return -1; else return 1})(dataGraph);
     const xScale = d3.scaleLinear()
       .domain(d3.extent(data, d => { if (Number(d[scatter])) return Number(d[scatter]) }))
       .range([25, max_width - 50]);
