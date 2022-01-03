@@ -81,7 +81,7 @@ function App() {
             <p className="GraphTitle">Alluvial Plot</p>
           </div>
           <div className="Graph">
-            <svg width={(width > 800 ? 800 : width)} height={height}>
+            <svg width={(width > 800 ? 830 : width)} height={height}>
               <g style={{ mixBlendMode: 'multiply' }}>
                 {dataGraph.nodes.map((node, i) => (
                   <SankeyNode
@@ -219,16 +219,17 @@ const generateGraph = (sankeyNodes, output_var) => {
   Object.keys(rels).map((first) => {
     Object.keys(rels[first]).map(second => {
       let rel_val = rels[first][second].sum / rels[first][second].count
+      if (!(nodes.includes((rel_val | 0) + "%")))
+        nodes.push((rel_val | 0) + "%")
       links.push({ "source": nodes.indexOf("" + first), "target": nodes.indexOf("" + second), "value": rels[first][second].count })
 
-      links.push({ "source": nodes.indexOf("" + second), "target": nodes.length + (Math.abs(90 - rel_val) | 0), "value": rels[first][second].count })
+      links.push({ "source": nodes.indexOf("" + second), "target": nodes.indexOf((rel_val | 0) + "%"), "value": rels[first][second].count })
 
     })
   })
   var res_nodes = []
   nodes.map(node => res_nodes.push({ "name": node }))
-  for (let i = 90; i < 100; i++)
-    res_nodes.push({ "name": i + "%" })
+    
   return { "nodes": res_nodes, "links": links }
 }
 
