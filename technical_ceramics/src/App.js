@@ -19,7 +19,7 @@ const SankeyNode = ({ name, x0, x1, y0, y1, color }) => (
 
 const SankeyLink = ({ link, color }) => (
   <>
-  <path
+    <path
       d={sankeyLinkHorizontal()(link)}
       className='sankeyLink'
       style={{
@@ -29,9 +29,9 @@ const SankeyLink = ({ link, color }) => (
         strokeWidth: Math.max(1, link.width),
       }}
     ><title>
-      <div className='sankeyLinkTitle'>
-      {link.source.name + " -> " + link.target.name + " : " + link.value}
-      </div>
+        <div className='sankeyLinkTitle'>
+          {link.source.name + " -> " + link.target.name + " : " + link.value}
+        </div>
       </title>
     </path>
   </>
@@ -49,7 +49,8 @@ const margin = {
 
 function App() {
   const [box, setBox] = useState("Year")
-  const [scatter, setScatter] = useState("Year")
+  const [scatter1, setScatter1] = useState("Year")
+  const [scatter2, setScatter2] = useState("Al (vol.%)")
   const [sankey1, setSakey1] = useState("Year")
   const [sankey2, setSakey2] = useState("Technology")
   const [dataGraph, setDataGraph] = useState(null)
@@ -59,45 +60,6 @@ function App() {
   const max_width = (width > 800 ? 800 : width)
   const max_height = height > 500 ? 500 : height
   if (dataGraph) {
-    //let boxStats = generateStats("Year", "RD (%)")
-    //var box_x = d3.scaleLinear().domain([minI, maxI]).range([height, 0]);
-    //const svg = d3
-    //  .select("#boxplot")
-    //  .attr("width", max_width + margin.left + margin.right)
-    //  .attr("height", max_height + margin.top + margin.bottom)
-    //  .append("g")
-    //  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    //  svg
-    //  .append("line")
-    //  .attr("y1", max_height/2)
-    //  .attr("y2", max_height/2)
-    //  .attr("x1", box_x(boxStats["2002"].min))
-    //  .attr("x2", box_x(boxStats["2002"].max))
-    //  .attr("stroke", "#1C3978");
-    //// Show the box
-    //svg
-    //  .append("rect")
-    //  .attr("y", max_width / 2)
-    //  .attr("x", box_x(boxStats["2002"].q3))
-    //  .attr("width", box_x(boxStats["2002"].q1) - box_x(boxStats["2002"].q3))
-    //  .attr("height", width)
-    //  .attr("stroke", "#1C3978")
-    //  .style("fill", "#fff");
-    //svg
-    //  .selectAll("toto")
-    //  .data([boxStats["2002"].min, boxStats["2002"].median, boxStats["2002"].max])
-    //  .enter()
-    //  .append("line")
-    //  .attr("y1", max_width / 2)
-    //  .attr("y2", max_width / 2)
-    //  .attr("x1", function (d) {
-    //    return box_x(d);
-    //  })
-    //  .attr("x2", function (d) {
-    //    return box_x(d);
-    //  })
-    //  .attr("stroke", "#1C3978");
-    //
     const layout = sankey()(dataGraph)
     const color = chroma.scale("Set3").classes(dataGraph.nodes.length);
     const colorScale = d3.scaleLinear()
@@ -108,13 +70,16 @@ function App() {
       .nodePadding(10)
       .extent([[1, 1], [max_width - 1, height - 5]])
       .nodeSort((a, b) => { if (a.name == b.name) return 0; else if (a.name < b.name) return 1; else return -1 })(dataGraph);
-    const xScale = d3.scaleLinear()
-      .domain(d3.extent(data, d => { if (Number(d[scatter])) return Number(d[scatter]) }))
-      .range([25, max_width - 50]);
-    console.log(links)
-    const yScale = d3.scaleLinear()
+    const scatter1Scale = d3.scaleLinear()
+      .domain(d3.extent(data, d => { return d[scatter1] }))
+      .range([0, max_height - 50]);
+    const scatter2Scale = d3.scaleLinear()
+      .domain(d3.extent(data, d => { return d[scatter2] }))
+      .range([0, max_height - 50]);
+    const rdScale = d3.scaleLinear()
       .domain(d3.extent(data, d => Number(d["RD (%)"])))
-      .range([0, max_height]);
+      .range([25, max_width - 50]);
+    console.log(scatter1)
     return (
       <div className="App">
         <div className='Intro'>
@@ -142,7 +107,7 @@ function App() {
                   />
                 ))}
                 {dataGraph.links.map((link, i) => (
-                  
+
                   <SankeyLink
                     link={link}
                     key={i}
@@ -189,22 +154,32 @@ function App() {
             <p className="GraphTitle">Scatter Plot</p>
           </div>
           <div id="scatter" className='Graph' >
-            <svg width={max_width} height={max_height + 50} >
+            <svg width={max_width + 25} height={max_height + 50} >
               <g >
 
-                <AxisLeft yScale={yScale} width={max_width - 10} />
-                <AxisBottom xScale={xScale} height={max_height} />
+                <AxisRight scatter1Scale={scatter1Scale} width={max_width} />
+                <AxisLeft scatter2Scale={scatter2Scale} width={max_width} />
+                <AxisBottom rdScale={rdScale} height={max_height - 30} />
                 <g >
                   {data.map((circle, i) => {
                     if (Number(circle["RD (%)"]))
                       return (
-                        <circle
-                          r={5}
-                          cx={xScale(circle[scatter])}
-                          cy={yScale(circle["RD (%)"])}
-                          style={{ fill: 'black' }}
-                          key={i}
-                        />);
+                        <>
+                          <circle
+                            r={5}
+                            cx={rdScale(circle["RD (%)"])}
+                            cy={scatter1Scale(circle[scatter1])}
+                            style={{ fill: 'red' }}
+                            key={scatter1 + i}
+                          ><title>{scatter1 + " : " + circle[scatter1] + ", RD (%): " + circle["RD (%)"]}</title></circle>
+                          <circle
+                            r={5}
+                            cx={rdScale(circle["RD (%)"])}
+                            cy={scatter2Scale(circle[scatter2])}
+                            style={{ fill: 'blue' }}
+                            key={scatter2 + i}
+                          ><title>{scatter2 + " : " + circle[scatter2] + ", RD (%): " + circle["RD (%)"]}</title></circle>
+                        </>);
                     else {
                       return (<></>);
                     }
@@ -214,20 +189,31 @@ function App() {
             </svg>
           </div>
           <div className="GraphControlls">
-            <div id="scatterX">
+
+
+            <div id="sankey1">
               <p>X-axis:</p>
-              <select value={scatter} className="ParamSelect" onChange={key => { setScatter(key.currentTarget.value) }}>
+              <select value={scatter2} className="ParamSelect" onChange={key => { setScatter2(key.currentTarget.value) }}>
                 {Object.keys(data[0]).map((key, i) => {
-                  if (key != "RD (%)")
+                  if (key != "RD (%)" && key != scatter1)
                     return <option value={key} key={i}>{key}</option>
                 })
                 }
               </select>
             </div>
-
-            <div id="scatterY" className="ParamSelect">
+            <div id="sankey2" className="ParamSelect">
               <p>Y-axis:</p>
               <p>RD  %</p>
+            </div>
+            <div id="sankey3">
+              <p>X-axis:</p>
+              <select value={scatter1} className="ParamSelect" onChange={key => { setScatter1(key.currentTarget.value) }}>
+                {Object.keys(data[0]).map((key, i) => {
+                  if (key != "RD (%)" && key != scatter2)
+                    return <option value={key} key={i}>{key}</option>
+                })
+                }
+              </select>
             </div>
           </div>
         </div>
@@ -281,10 +267,7 @@ const generateGraph = (sankeyNodes, output_var) => {
       let second = node[sankeyNodes[i + 1]]
       if (first == "" || second == "")
         continue
-      if (sankeyNodes[i] != "Year" && Number(first) && first > 10)
-        first -= first % 10
-      if (sankeyNodes[i + 1] != "Year" && Number(second) && second > 10)
-        second -= second % 10
+
       if (!(nodes.includes("" + first)))
         nodes.push("" + first)
       if (!(nodes.includes("" + second)))
@@ -312,23 +295,22 @@ const generateGraph = (sankeyNodes, output_var) => {
 
       links.push({ "source": nodes.indexOf("" + second), "target": nodes.indexOf((rel_val | 0) + "%"), "value": rels[first][second].count })
     })
-    
+
   })
   var res_nodes = []
   nodes.map(node => res_nodes.push({ "name": node }))
 
   return { "nodes": res_nodes, "links": links }
 }
+function AxisLeft({ scatter2Scale, width }) {
+  const textPadding = 5
 
-function AxisLeft({ yScale, width }) {
-  const textPadding = width - 10
-
-  const axis = yScale.ticks(10).map((d, i) => (
+  const axis = scatter2Scale.ticks(6).map((d, i) => (
     <g key={i} className="y-tick">
       <line
-        style={{ stroke: "black" }}
-        y1={yScale(d)}
-        y2={yScale(d)}
+        style={{ stroke: "red" }}
+        y1={scatter2Scale(d)}
+        y2={scatter2Scale(d)}
         x1={25}
         x2={width - 15}
       />
@@ -336,7 +318,7 @@ function AxisLeft({ yScale, width }) {
         style={{ fontSize: 12 }}
         x={textPadding}
         dy=".71em"
-        y={yScale(d)}
+        y={scatter2Scale(d) - 6}
       >
         {d}
       </text>
@@ -344,22 +326,46 @@ function AxisLeft({ yScale, width }) {
   ));
   return <>{axis}</>;
 }
-function AxisBottom({ xScale, height }) {
+function AxisRight({ scatter1Scale, width }) {
+  const textPadding = width - 10
+
+  const axis = scatter1Scale.ticks(6).map((d, i) => (
+    <g key={i} className="y-tick">
+      <line
+        style={{ stroke: "blue" }}
+        y1={scatter1Scale(d)}
+        y2={scatter1Scale(d)}
+        x1={25}
+        x2={width - 15}
+      />
+      <text
+        style={{ fontSize: 12 }}
+        x={textPadding}
+        dy=".71em"
+        y={scatter1Scale(d) - 5}
+      >
+        {d}
+      </text>
+    </g>
+  ));
+  return <>{axis}</>;
+}
+function AxisBottom({ rdScale, height }) {
   const textPadding = 10;
 
-  const axis = xScale.ticks(20).map((d, i) => (
+  const axis = rdScale.ticks(20).map((d, i) => (
     <g className="x-tick" key={i}>
       <line
         style={{ stroke: "black" }}
         y1={0}
         y2={height}
-        x1={xScale(d)}
-        x2={xScale(d)}
+        x1={rdScale(d)}
+        x2={rdScale(d)}
       />
       <text
         style={{ fontSize: '2vh', fontWeight: 'bolder' }}
         dy=".71em"
-        x={xScale(d)}
+        x={rdScale(d)}
         y={height + textPadding}
       >
         {d}
