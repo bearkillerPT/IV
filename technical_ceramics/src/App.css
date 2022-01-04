@@ -24,14 +24,16 @@
 }
 #sankey1{
   position: absolute;
-  left: 25%;
+  left: 28%;
 }
 #sankey2{
   position: relative;
+  left: 46%;
+
 }
 #sankey3{
   position: absolute;
-  right: 25%;
+  right: 24%;
 }
 .ParamSelect{
   flex:1;
@@ -63,12 +65,22 @@
   justify-content: space-between;
   padding-bottom: 10%;
 }
+.sankeyLink:hover {
+  stroke-opacity: .5;
+}
+.nodeRectText{
+  font-weight: bolder;
+}
 
 #scatterX{
   position: absolute;
   left: 25%;
 }
 
+.sankeyLinkTitle{
+  text-align: center;  
+  border-radius: 5vh;
+}
 #scatterY{
   
   position: absolute;

@@ -8,26 +8,35 @@ import data from './data.json'
 import chroma from "chroma-js";
 import { max } from 'd3';
 const { innerWidth: width, innerHeight: height } = window;
-
+let totalLinkValue = 0
 const SankeyNode = ({ name, x0, x1, y0, y1, color }) => (
   <>
-    <rect x={x0} y={y0} width={x1 - x0} height={y1 - y0} fill={color} />
-    <text x={x0 < (width) / 2 ? x1 + 6 : x0 - 40} y={((y1 + y0) / 2) + 5} fontSize={15} fill={"black"}>{name}</text>
-
+    <rect x={x0} y={y0} width={x1 - x0 + name.length * 6} height={y1 - y0} fill={color} />
+    <text x={x0 < (width) / 2 ? x1 - 12 : x0 + 2} y={((y1 + y0) / 2) + 5} fontSize={15} fill={"black"} className='nodeRectText'>{name}</text>
   </>
 )
 
 
 const SankeyLink = ({ link, color }) => (
+  <>
   <path
-    d={sankeyLinkHorizontal()(link)}
-    style={{
-      fill: 'none',
-      strokeOpacity: '.5',
-      stroke: color,
-      strokeWidth: Math.max(1, link.width),
-    }}
-  />
+      d={sankeyLinkHorizontal()(link)}
+      className='sankeyLink'
+      style={{
+        fill: 'none',
+        strokeOpacity: '.5',
+        stroke: color,
+        strokeWidth: Math.max(1, link.width),
+      }}
+    ><title>
+      <div className='sankeyLinkTitle'>
+      {link.source.name + " -> " + link.target.name + " : " + link.value}
+      </div>
+      </title>
+    </path>
+  </>
+
+
 )
 const margin = {
   top: 40,
@@ -102,7 +111,7 @@ function App() {
     const xScale = d3.scaleLinear()
       .domain(d3.extent(data, d => { if (Number(d[scatter])) return Number(d[scatter]) }))
       .range([25, max_width - 50]);
-
+    console.log(links)
     const yScale = d3.scaleLinear()
       .domain(d3.extent(data, d => Number(d["RD (%)"])))
       .range([0, max_height]);
@@ -123,7 +132,7 @@ function App() {
             <p className="GraphTitle">Alluvial Plot</p>
           </div>
           <div className="Graph">
-            <svg width={(width > 800 ? 850 : width)} height={height}>
+            <svg width={(width > 800 ? 820 : width)} height={height}>
               <g style={{ mixBlendMode: 'multiply' }}>
                 {dataGraph.nodes.map((node, i) => (
                   <SankeyNode
@@ -133,6 +142,7 @@ function App() {
                   />
                 ))}
                 {dataGraph.links.map((link, i) => (
+                  
                   <SankeyLink
                     link={link}
                     key={i}
@@ -301,8 +311,8 @@ const generateGraph = (sankeyNodes, output_var) => {
       links.push({ "source": nodes.indexOf("" + first), "target": nodes.indexOf("" + second), "value": rels[first][second].count })
 
       links.push({ "source": nodes.indexOf("" + second), "target": nodes.indexOf((rel_val | 0) + "%"), "value": rels[first][second].count })
-
     })
+    
   })
   var res_nodes = []
   nodes.map(node => res_nodes.push({ "name": node }))
@@ -347,7 +357,7 @@ function AxisBottom({ xScale, height }) {
         x2={xScale(d)}
       />
       <text
-        style={{ fontSize: '2vh' }}
+        style={{ fontSize: '2vh', fontWeight: 'bolder' }}
         dy=".71em"
         x={xScale(d)}
         y={height + textPadding}
@@ -359,3 +369,4 @@ function AxisBottom({ xScale, height }) {
   return <>{axis}</>;
 }
 export default App;
+
