@@ -1,14 +1,10 @@
-import logo from './logo.svg';
 import './App.css';
 import { useState, useEffect } from 'react'
 import * as d3 from "d3";
-import * as d3_box from 'd3-boxplot'
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey'
 import data from './data.json'
 import chroma from "chroma-js";
-import { max } from 'd3';
 const { innerWidth: width, innerHeight: height } = window;
-let totalLinkValue = 0
 const SankeyNode = ({ name, x0, x1, y0, y1, color }) => (
   <>
     <rect x={x0} y={y0} width={x1 - x0 + name.length * 6} height={y1 - y0} fill={color} />
@@ -38,17 +34,8 @@ const SankeyLink = ({ link, color }) => (
 
 
 )
-const margin = {
-  top: 40,
-  bottom: 40,
-  left: 40,
-  right: 40
-};
-
-
 
 function App() {
-  const [box, setBox] = useState("Year")
   const [param1, setParam1] = useState("Year")
   const [param2, setParam2] = useState("Al (vol.%)")
   const [dataGraph, setDataGraph] = useState(null)
@@ -70,14 +57,19 @@ function App() {
       .nodeSort((a, b) => {
         let aname = a.name;
         let bname = b.name;
-        if(Number(a.name))
+        if (Number(a.name))
           aname = Number(a.name)
-          if(Number(b.name))
+        else if (a.name[a.name.length - 1] == "%")
+          aname = Number(a.name.substring(0, a.name.length - 1))
+        if (Number(b.name))
           bname = Number(b.name)
-        if (aname == bname) 
-          return 0; 
-        else if (aname < bname) return 1; 
-        else return -1 })(dataGraph);
+        else if (b.name[b.name.length - 1] == "%")
+          bname = Number(b.name.substring(0, b.name.length - 1))
+        if (aname == bname)
+          return 0;
+        else if (aname < bname) return 1;
+        else return -1
+      })(dataGraph);
     const param1Scale = d3.scaleLinear()
       .domain(d3.extent(data, d => { return d[param1] }))
       .range([0, max_height - 50]);
@@ -129,10 +121,10 @@ function App() {
 
           <div className="GraphControlls">
             <div id='param1'>
-              <div  className='paramColorContainer'>
-              <p>1st paramether</p>
+              <div className='paramColorContainer'>
+                <p>1st paramether</p>
 
-              <div id="param1Color"/>
+                <div id="param1Color" />
 
               </div>
               <select value={param1} className="ParamSelect" onChange={key => { setParam1(key.currentTarget.value) }}>
@@ -144,10 +136,10 @@ function App() {
               </select>
             </div>
             <div id='param2'>
-              <div  className='paramColorContainer'>
-              <p>2nd paramether</p>
+              <div className='paramColorContainer'>
+                <p>2nd paramether</p>
 
-              <div id="param2Color"/>
+                <div id="param2Color" />
 
               </div>
               <select value={param2} className="ParamSelect" onChange={key => { setParam2(key.currentTarget.value) }}>
@@ -216,32 +208,6 @@ function App() {
   }
 }
 
-const generateStats = (input_var, output_var) => {
-  let res = {}
-  for (let node of data) {
-    if (Number(node[output_var])) {
-      let out_val = Number(node[output_var])
-      if (node[input_var] in res)
-        res[node[input_var]].push(out_val)
-      else {
-        res[node[input_var]] = [out_val]
-      }
-    }
-  }
-  for (let key in res) {
-    res[key].sort((a, b) => a - b);
-  }
-  let stats = {}
-  for (let key in res) {
-    stats[key] = {
-      min: res[key][0],
-      max: res[key][res[key].length - 1],
-
-    }
-  }
-  return res
-}
-
 //"RD (%)" will be divided into 10 categories: 90, 91, .. 99
 const generateGraph = (sankeyNodes, output_var) => {
   var rels = {}
@@ -274,13 +240,32 @@ const generateGraph = (sankeyNodes, output_var) => {
   }
   var links = []
   Object.keys(rels).map((first) => {
+    let duplicates = 1;
+    let second_index = nodes.length - 1
     Object.keys(rels[first]).map(second => {
-      let rel_val = rels[first][second].sum / rels[first][second].count
-      if (!(nodes.includes((rel_val | 0) + "%")))
-        nodes.push((rel_val | 0) + "%")
-      links.push({ "source": nodes.indexOf("" + first), "target": nodes.indexOf("" + second), "value": rels[first][second].count })
+      let rel_val = (rels[first][second].sum / rels[first][second].count) | 0
 
-      links.push({ "source": nodes.indexOf("" + second), "target": nodes.indexOf((rel_val | 0) + "%"), "value": rels[first][second].count })
+      if (!(nodes.includes(rel_val + "%")))
+        nodes.push(rel_val + "%")
+
+      if (second == first) {
+
+        if (duplicates == 1) {
+
+          duplicates = 2
+          nodes.push("" + second)
+          second_index = nodes.length - 1
+          links.push({ "source": nodes.indexOf("" + first), "target": second_index, "value": rels[first][second].count })
+          links.push({ "source": second_index, "target": nodes.indexOf(rel_val + "%"), "value": rels[first][second].count })
+
+        }
+      }
+      else {
+        links.push({ "source": nodes.indexOf("" + first), "target": nodes.indexOf("" + second), "value": rels[first][second].count })
+        links.push({ "source": nodes.indexOf("" + second), "target": nodes.indexOf(rel_val + "%"), "value": rels[first][second].count })
+
+
+      }
     })
 
   })

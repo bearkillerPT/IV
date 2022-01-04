@@ -84,7 +84,7 @@
     justify-content: space-between;
     padding-bottom: 10%;
     flex-wrap: wrap;
-    width: 100%;
+    width: 90%;
 }
 
 .sankeyLink:hover {
