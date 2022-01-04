@@ -1,88 +1,132 @@
+.SankeyGraph {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
 
-.SankeyGraph{
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
+.Intro {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: #555555;
+    text-align: justify;
+    text-justify: inter-word;
+    width: 95%;
+    border-radius: 2vh;
+    padding-right: 1vh;
+    padding-left: 1vh;
 }
-.Intro{
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  background-color: #555555;
-  text-align: justify;
-  text-justify: inter-word;
-  width: 95%;
-  border-radius: 2vh;
-  padding-right: 1vh;
-  padding-left: 1vh;
-}
-.IntroP{
-  width: 100%;
-  font-size: 2vh;
-  color: #f3f3eb;
-}
-#sankey1{
-  position: absolute;
-  left: 28%;
-}
-#sankey2{
-  position: relative;
-  left: 46%;
 
+.IntroP {
+    width: 100%;
+    font-size: 2vh;
+    color: #f3f3eb;
 }
-#sankey3{
-  position: absolute;
-  right: 24%;
+
+@media only screen and (min-width: 800px) {
+    #param1 {
+        position: absolute;
+        left: 28%;
+    }
+    #param2 {
+        position: relative;
+        left: 46%;
+    }
+    #param3 {
+        position: absolute;
+        right: 24%;
+    }
 }
-.ParamSelect{
-  flex:1;
-  max-width: 75%;
-  border-radius: 2vh;
+
+@media only screen and (max-width: 800px) {
+    #param1 {
+        flex: 1;
+    }
+    #param2 {
+        flex: 1;
+    }
+    #param3 {
+        flex: 1;
+    }
 }
-.Graph{
-  flex:1;
-  max-width: 800;
-  justify-content: center;
-  padding-bottom: 2vh;
+
+.ParamSelect {
+    flex: 1;
+    max-width: 75%;
+    border-radius: 2vh;
 }
-.GraphHeader{
-  display: flex;
-  width: 100%;
-  background-color: #333333;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 0.5vh;
-  margin-top: 0.5vh;
-  
+
+.Graph {
+    flex: 1;
+    max-width: 800;
+    justify-content: center;
+    padding-bottom: 2vh;
 }
-.GraphTitle{
-  font-size: 2vh;
-  color: #f3f3eb;
+
+.GraphHeader {
+    display: flex;
+    width: 100%;
+    background-color: #333333;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0.5vh;
+    margin-top: 0.5vh;
 }
-.GraphControlls{
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 10%;
+
+.GraphTitle {
+    font-size: 2vh;
+    color: #f3f3eb;
 }
+
+.GraphControlls {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 10%;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
 .sankeyLink:hover {
-  stroke-opacity: .5;
-}
-.nodeRectText{
-  font-weight: bolder;
+    stroke-opacity: .5;
 }
 
-#scatterX{
-  position: absolute;
-  left: 25%;
+.nodeRectText {
+    font-weight: bolder;
 }
 
-.sankeyLinkTitle{
-  text-align: center;  
-  border-radius: 5vh;
+#scatterX {
+    position: absolute;
+    left: 25%;
 }
-#scatterY{
-  
-  position: absolute;
-  right: 25%;
+
+.sankeyLinkTitle {
+    text-align: center;
+    border-radius: 5vh;
+}
+
+#scatterY {
+    position: absolute;
+    right: 25%;
+}
+
+#param1Color {
+    width: 6vh;
+    border-radius: 25%;
+    height: 1vh;
+    background-color: blue;
+}
+
+#param2Color {
+    width: 6vh;
+    border-radius: 25%;
+    height: 1vh;
+    background-color: red;
+}
+
+.paramColorContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
 }

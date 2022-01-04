@@ -49,14 +49,12 @@ const margin = {
 
 function App() {
   const [box, setBox] = useState("Year")
-  const [scatter1, setScatter1] = useState("Year")
-  const [scatter2, setScatter2] = useState("Al (vol.%)")
-  const [sankey1, setSakey1] = useState("Year")
-  const [sankey2, setSakey2] = useState("Technology")
+  const [param1, setParam1] = useState("Year")
+  const [param2, setParam2] = useState("Al (vol.%)")
   const [dataGraph, setDataGraph] = useState(null)
   useEffect(() => {
-    setDataGraph(generateGraph([sankey1, sankey2], "RD (%)"))
-  }, [sankey1, sankey2])
+    setDataGraph(generateGraph([param1, param2], "RD (%)"))
+  }, [param1, param2])
   const max_width = (width > 800 ? 800 : width)
   const max_height = height > 500 ? 500 : height
   if (dataGraph) {
@@ -69,17 +67,27 @@ function App() {
       .nodeWidth(15)
       .nodePadding(10)
       .extent([[1, 1], [max_width - 1, height - 5]])
-      .nodeSort((a, b) => { if (a.name == b.name) return 0; else if (a.name < b.name) return 1; else return -1 })(dataGraph);
-    const scatter1Scale = d3.scaleLinear()
-      .domain(d3.extent(data, d => { return d[scatter1] }))
+      .nodeSort((a, b) => {
+        let aname = a.name;
+        let bname = b.name;
+        if(Number(a.name))
+          aname = Number(a.name)
+          if(Number(b.name))
+          bname = Number(b.name)
+        if (aname == bname) 
+          return 0; 
+        else if (aname < bname) return 1; 
+        else return -1 })(dataGraph);
+    const param1Scale = d3.scaleLinear()
+      .domain(d3.extent(data, d => { return d[param1] }))
       .range([0, max_height - 50]);
-    const scatter2Scale = d3.scaleLinear()
-      .domain(d3.extent(data, d => { return d[scatter2] }))
+    const param2Scale = d3.scaleLinear()
+      .domain(d3.extent(data, d => { return d[param2] }))
       .range([0, max_height - 50]);
     const rdScale = d3.scaleLinear()
       .domain(d3.extent(data, d => Number(d["RD (%)"])))
       .range([25, max_width - 50]);
-    console.log(scatter1)
+    console.log(param1)
     return (
       <div className="App">
         <div className='Intro'>
@@ -120,28 +128,38 @@ function App() {
           </div>
 
           <div className="GraphControlls">
-            <div id='sankey1'>
+            <div id='param1'>
+              <div  className='paramColorContainer'>
               <p>1st paramether</p>
-              <select value={sankey1} className="ParamSelect" onChange={key => { setSakey1(key.currentTarget.value) }}>
+
+              <div id="param1Color"/>
+
+              </div>
+              <select value={param1} className="ParamSelect" onChange={key => { setParam1(key.currentTarget.value) }}>
                 {Object.keys(data[0]).map((key, i) => {
-                  if (key != sankey2 && key != "RD (%)")
+                  if (key != param2 && key != "RD (%)")
                     return <option value={key} key={i}>{key}</option>
                 })
                 }
               </select>
             </div>
-            <div id='sankey2'>
+            <div id='param2'>
+              <div  className='paramColorContainer'>
               <p>2nd paramether</p>
-              <select value={sankey2} className="ParamSelect" onChange={key => { setSakey2(key.currentTarget.value) }}>
+
+              <div id="param2Color"/>
+
+              </div>
+              <select value={param2} className="ParamSelect" onChange={key => { setParam2(key.currentTarget.value) }}>
                 {Object.keys(data[0]).map((key, i) => {
-                  if (key != sankey1 && key != "RD (%)")
+                  if (key != param1 && key != "RD (%)")
                     return <option value={key} key={i}>{key}</option>
                 })
                 }
               </select>
             </div>
 
-            <div id='sankey3'>
+            <div id='param3'>
               <p>3rd paramether:</p>
               <p>RD(%)</p>
             </div>
@@ -157,8 +175,8 @@ function App() {
             <svg width={max_width + 25} height={max_height + 50} >
               <g >
 
-                <AxisRight scatter1Scale={scatter1Scale} width={max_width} />
-                <AxisLeft scatter2Scale={scatter2Scale} width={max_width} />
+                <AxisRight param1Scale={param1Scale} width={max_width} />
+                <AxisLeft param2Scale={param2Scale} width={max_width} />
                 <AxisBottom rdScale={rdScale} height={max_height - 30} />
                 <g >
                   {data.map((circle, i) => {
@@ -168,17 +186,17 @@ function App() {
                           <circle
                             r={5}
                             cx={rdScale(circle["RD (%)"])}
-                            cy={scatter1Scale(circle[scatter1])}
+                            cy={param1Scale(circle[param1])}
                             style={{ fill: 'red' }}
-                            key={scatter1 + i}
-                          ><title>{scatter1 + " : " + circle[scatter1] + ", RD (%): " + circle["RD (%)"]}</title></circle>
+                            key={param1 + i}
+                          ><title>{param1 + " : " + circle[param1] + ", RD (%): " + circle["RD (%)"]}</title></circle>
                           <circle
                             r={5}
                             cx={rdScale(circle["RD (%)"])}
-                            cy={scatter2Scale(circle[scatter2])}
+                            cy={param2Scale(circle[param2])}
                             style={{ fill: 'blue' }}
-                            key={scatter2 + i}
-                          ><title>{scatter2 + " : " + circle[scatter2] + ", RD (%): " + circle["RD (%)"]}</title></circle>
+                            key={param2 + i}
+                          ><title>{param2 + " : " + circle[param2] + ", RD (%): " + circle["RD (%)"]}</title></circle>
                         </>);
                     else {
                       return (<></>);
@@ -188,37 +206,6 @@ function App() {
               </g>
             </svg>
           </div>
-          <div className="GraphControlls">
-
-
-            <div id="sankey1">
-              <p>X-axis:</p>
-              <select value={scatter2} className="ParamSelect" onChange={key => { setScatter2(key.currentTarget.value) }}>
-                {Object.keys(data[0]).map((key, i) => {
-                  if (key != "RD (%)" && key != scatter1)
-                    return <option value={key} key={i}>{key}</option>
-                })
-                }
-              </select>
-            </div>
-            <div id="sankey2" className="ParamSelect">
-              <p>Y-axis:</p>
-              <p>RD  %</p>
-            </div>
-            <div id="sankey3">
-              <p>X-axis:</p>
-              <select value={scatter1} className="ParamSelect" onChange={key => { setScatter1(key.currentTarget.value) }}>
-                {Object.keys(data[0]).map((key, i) => {
-                  if (key != "RD (%)" && key != scatter2)
-                    return <option value={key} key={i}>{key}</option>
-                })
-                }
-              </select>
-            </div>
-          </div>
-        </div>
-        <div className="ScatterGraph">
-
         </div>
       </div>
     );
@@ -302,15 +289,15 @@ const generateGraph = (sankeyNodes, output_var) => {
 
   return { "nodes": res_nodes, "links": links }
 }
-function AxisLeft({ scatter2Scale, width }) {
+function AxisLeft({ param2Scale, width }) {
   const textPadding = 5
 
-  const axis = scatter2Scale.ticks(6).map((d, i) => (
+  const axis = param2Scale.ticks(6).map((d, i) => (
     <g key={i} className="y-tick">
       <line
         style={{ stroke: "red" }}
-        y1={scatter2Scale(d)}
-        y2={scatter2Scale(d)}
+        y1={param2Scale(d)}
+        y2={param2Scale(d)}
         x1={25}
         x2={width - 15}
       />
@@ -318,7 +305,7 @@ function AxisLeft({ scatter2Scale, width }) {
         style={{ fontSize: 12 }}
         x={textPadding}
         dy=".71em"
-        y={scatter2Scale(d) - 6}
+        y={param2Scale(d) - 6}
       >
         {d}
       </text>
@@ -326,15 +313,15 @@ function AxisLeft({ scatter2Scale, width }) {
   ));
   return <>{axis}</>;
 }
-function AxisRight({ scatter1Scale, width }) {
+function AxisRight({ param1Scale, width }) {
   const textPadding = width - 10
 
-  const axis = scatter1Scale.ticks(6).map((d, i) => (
+  const axis = param1Scale.ticks(6).map((d, i) => (
     <g key={i} className="y-tick">
       <line
         style={{ stroke: "blue" }}
-        y1={scatter1Scale(d)}
-        y2={scatter1Scale(d)}
+        y1={param1Scale(d)}
+        y2={param1Scale(d)}
         x1={25}
         x2={width - 15}
       />
@@ -342,7 +329,7 @@ function AxisRight({ scatter1Scale, width }) {
         style={{ fontSize: 12 }}
         x={textPadding}
         dy=".71em"
-        y={scatter1Scale(d) - 5}
+        y={param1Scale(d) - 5}
       >
         {d}
       </text>
