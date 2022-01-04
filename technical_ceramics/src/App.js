@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import { useState, useEffect } from 'react'
 import * as d3 from "d3";
+import * as d3_box from 'd3-boxplot'
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey'
 import data from './data.json'
 import chroma from "chroma-js";
@@ -38,6 +39,7 @@ const margin = {
 
 
 function App() {
+  const [box, setBox] = useState("Year")
   const [scatter, setScatter] = useState("Year")
   const [sankey1, setSakey1] = useState("Year")
   const [sankey2, setSakey2] = useState("Technology")
@@ -46,8 +48,47 @@ function App() {
     setDataGraph(generateGraph([sankey1, sankey2], "RD (%)"))
   }, [sankey1, sankey2])
   const max_width = (width > 800 ? 800 : width)
-  const max_height = height > 500 ? 500: height
+  const max_height = height > 500 ? 500 : height
   if (dataGraph) {
+    //let boxStats = generateStats("Year", "RD (%)")
+    //var box_x = d3.scaleLinear().domain([minI, maxI]).range([height, 0]);
+    //const svg = d3
+    //  .select("#boxplot")
+    //  .attr("width", max_width + margin.left + margin.right)
+    //  .attr("height", max_height + margin.top + margin.bottom)
+    //  .append("g")
+    //  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    //  svg
+    //  .append("line")
+    //  .attr("y1", max_height/2)
+    //  .attr("y2", max_height/2)
+    //  .attr("x1", box_x(boxStats["2002"].min))
+    //  .attr("x2", box_x(boxStats["2002"].max))
+    //  .attr("stroke", "#1C3978");
+    //// Show the box
+    //svg
+    //  .append("rect")
+    //  .attr("y", max_width / 2)
+    //  .attr("x", box_x(boxStats["2002"].q3))
+    //  .attr("width", box_x(boxStats["2002"].q1) - box_x(boxStats["2002"].q3))
+    //  .attr("height", width)
+    //  .attr("stroke", "#1C3978")
+    //  .style("fill", "#fff");
+    //svg
+    //  .selectAll("toto")
+    //  .data([boxStats["2002"].min, boxStats["2002"].median, boxStats["2002"].max])
+    //  .enter()
+    //  .append("line")
+    //  .attr("y1", max_width / 2)
+    //  .attr("y2", max_width / 2)
+    //  .attr("x1", function (d) {
+    //    return box_x(d);
+    //  })
+    //  .attr("x2", function (d) {
+    //    return box_x(d);
+    //  })
+    //  .attr("stroke", "#1C3978");
+    //
     const layout = sankey()(dataGraph)
     const color = chroma.scale("Set3").classes(dataGraph.nodes.length);
     const colorScale = d3.scaleLinear()
@@ -57,7 +98,7 @@ function App() {
       .nodeWidth(15)
       .nodePadding(10)
       .extent([[1, 1], [max_width - 1, height - 5]])
-      .nodeSort((a,b)=>{console.log(a,b); if(a.name==b.name)return 0; else if(a.name<b.name) return 1; else return -1})(dataGraph);
+      .nodeSort((a, b) => { if (a.name == b.name) return 0; else if (a.name < b.name) return 1; else return -1 })(dataGraph);
     const xScale = d3.scaleLinear()
       .domain(d3.extent(data, d => { if (Number(d[scatter])) return Number(d[scatter]) }))
       .range([25, max_width - 50]);
@@ -104,7 +145,7 @@ function App() {
           </div>
 
           <div className="GraphControlls">
-            <div>
+            <div id='sankey1'>
               <p>1st paramether</p>
               <select value={sankey1} className="ParamSelect" onChange={key => { setSakey1(key.currentTarget.value) }}>
                 {Object.keys(data[0]).map((key, i) => {
@@ -114,7 +155,7 @@ function App() {
                 }
               </select>
             </div>
-            <div>
+            <div id='sankey2'>
               <p>2nd paramether</p>
               <select value={sankey2} className="ParamSelect" onChange={key => { setSakey2(key.currentTarget.value) }}>
                 {Object.keys(data[0]).map((key, i) => {
@@ -124,18 +165,24 @@ function App() {
                 }
               </select>
             </div>
+
+            <div id='sankey3'>
+              <p>3rd paramether:</p>
+              <p>RD(%)</p>
+            </div>
+
           </div>
         </div>
         <div className="ScatterGraph">
 
           <div className="GraphHeader">
-            <p className="GraphTitle">Scatter Plot (not yet implemented)</p>
+            <p className="GraphTitle">Scatter Plot</p>
           </div>
           <div id="scatter" className='Graph' >
             <svg width={max_width} height={max_height + 50} >
               <g >
 
-                <AxisLeft yScale={yScale} />
+                <AxisLeft yScale={yScale} width={max_width - 10} />
                 <AxisBottom xScale={xScale} height={max_height} />
                 <g >
                   {data.map((circle, i) => {
@@ -157,11 +204,7 @@ function App() {
             </svg>
           </div>
           <div className="GraphControlls">
-            <div className="ParamSelect">
-              <p>Y-axis:</p>
-              <p>RD  %</p>
-            </div>
-            <div>
+            <div id="scatterX">
               <p>X-axis:</p>
               <select value={scatter} className="ParamSelect" onChange={key => { setScatter(key.currentTarget.value) }}>
                 {Object.keys(data[0]).map((key, i) => {
@@ -171,7 +214,15 @@ function App() {
                 }
               </select>
             </div>
+
+            <div id="scatterY" className="ParamSelect">
+              <p>Y-axis:</p>
+              <p>RD  %</p>
+            </div>
           </div>
+        </div>
+        <div className="ScatterGraph">
+
         </div>
       </div>
     );
@@ -180,6 +231,32 @@ function App() {
   else {
     return (<div></div>);
   }
+}
+
+const generateStats = (input_var, output_var) => {
+  let res = {}
+  for (let node of data) {
+    if (Number(node[output_var])) {
+      let out_val = Number(node[output_var])
+      if (node[input_var] in res)
+        res[node[input_var]].push(out_val)
+      else {
+        res[node[input_var]] = [out_val]
+      }
+    }
+  }
+  for (let key in res) {
+    res[key].sort((a, b) => a - b);
+  }
+  let stats = {}
+  for (let key in res) {
+    stats[key] = {
+      min: res[key][0],
+      max: res[key][res[key].length - 1],
+
+    }
+  }
+  return res
 }
 
 //"RD (%)" will be divided into 10 categories: 90, 91, .. 99
@@ -229,12 +306,12 @@ const generateGraph = (sankeyNodes, output_var) => {
   })
   var res_nodes = []
   nodes.map(node => res_nodes.push({ "name": node }))
-    
+
   return { "nodes": res_nodes, "links": links }
 }
 
 function AxisLeft({ yScale, width }) {
-  const textPadding = -1
+  const textPadding = width - 10
 
   const axis = yScale.ticks(10).map((d, i) => (
     <g key={i} className="y-tick">
@@ -242,8 +319,8 @@ function AxisLeft({ yScale, width }) {
         style={{ stroke: "black" }}
         y1={yScale(d)}
         y2={yScale(d)}
-        x1={0}
-        x2={width}
+        x1={25}
+        x2={width - 15}
       />
       <text
         style={{ fontSize: 12 }}
@@ -260,7 +337,7 @@ function AxisLeft({ yScale, width }) {
 function AxisBottom({ xScale, height }) {
   const textPadding = 10;
 
-  const axis = xScale.ticks(10).map((d, i) => (
+  const axis = xScale.ticks(20).map((d, i) => (
     <g className="x-tick" key={i}>
       <line
         style={{ stroke: "black" }}
