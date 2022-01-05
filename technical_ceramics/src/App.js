@@ -120,8 +120,8 @@ const SankeyLink = ({ link, color }) => (
 )
 
 function App() {
-  const [param1, setParam1] = useState("Year")
-  const [param2, setParam2] = useState("Al (vol.%)")
+  const [param1, setParam1] = useState("Al (vol.%)")
+  const [param2, setParam2] = useState("Technology")
   const [dataGraph, setDataGraph] = useState(null)
   useEffect(() => {
     setDataGraph(generateGraph([param1, param2], "RD (%)"))
@@ -183,7 +183,7 @@ function App() {
             <p className="GraphTitle">Alluvial Plot</p>
           </div>
           <div className="Graph">
-            <svg width={(width > 800 ? 850 : width)} height={height}>
+            <svg width={(width > 800 ? 820 : width)} height={height}>
               <g style={{ mixBlendMode: 'multiply' }}>
                 {dataGraph.nodes.map((node, i) => (
                   <SankeyNode
@@ -239,7 +239,7 @@ function App() {
 
             <div id='param3'>
               <p>3rd paramether:</p>
-              <p>RD(%)</p>
+              <p >RD(%)</p>
             </div>
 
           </div>
@@ -250,7 +250,7 @@ function App() {
             <p className="GraphTitle">Scatter Plot</p>
           </div>
           <div className='Graph' >
-            <svg width={max_width+ 10} height={max_height + 50} >
+            <svg width={max_width+ 50} height={max_height + 50} >
               <g >
 
                 <AxisRight param2Scale={param2Scale} width={max_width} />
@@ -266,7 +266,7 @@ function App() {
                             r={5}
                             cx={rdScale(circle["RD (%)"])}
                             cy={param1Scale("" + circle[param1])}
-                            style={{ fill: 'red' }}
+                            style={{ fill: '#fb0c1d' }}
                             key={param1 + i}
                           ><title>{param1 + " : " + circle[param1] + ", RD (%): " + circle["RD (%)"]}</title></circle>
                           <circle
@@ -274,7 +274,7 @@ function App() {
                             r={5}
                             cx={rdScale(circle["RD (%)"])}
                             cy={param2Scale("" + circle[param2])}
-                            style={{ fill: 'blue' }}
+                            style={{ fill: '#0d0da3' }}
                             key={param2 + i}
                           ><title>{param2 + " : " + circle[param2] + ", RD (%): " + circle["RD (%)"]}</title></circle>
                         </>);
@@ -360,14 +360,15 @@ function AxisLeft({ param1Scale, width }) {
   const axis = param1Scale.domain().map((d, i) => (
     <g key={i} className="y-tick">
       <line
-        style={{ stroke: "red" }}
+        style={{ stroke: "#fb0c1d" }}
         y1={param1Scale(d)}
         y2={param1Scale(d)}
         x1={25}
         x2={width - 15}
       />
       <text
-        style={{ fontSize: 12 }}
+        style={{ fontSize: '1.5vh', fontWeight: 'bold' }}
+      
         x={textPadding}
         dy=".71em"
         y={param1Scale(d) - 6}
@@ -383,14 +384,15 @@ function AxisRight({ param2Scale, width }) {
   const axis = param2Scale.domain().map((d, i) => (
     <g key={i} className="y-tick">
       <line
-        style={{ stroke: "blue" }}
+        style={{ stroke: "#0d0da3" }}
         y1={param2Scale(d)}
         y2={param2Scale(d)}
         x1={25}
         x2={width - 15}
       />
       <text
-        style={{ fontSize: 12 }}
+        style={{ fontSize: '1.5vh', fontWeight: 'bold' }}
+      
         x={textPadding}
         dy=".71em"
         y={param2Scale(d) - 5}
@@ -414,7 +416,7 @@ function AxisBottom({ rdScale, height }) {
         x2={rdScale(d)}
       />
       <text
-        style={{ fontSize: '2vh', fontWeight: 'bolder' }}
+        style={{ fontSize: '1.5vh', fontWeight: 'bold' }}
         dy=".71em"
         x={rdScale(d)}
         y={height + textPadding}

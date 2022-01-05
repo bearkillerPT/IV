@@ -105,17 +105,17 @@
     border-radius: 5vh;
 }
 #param1Color {
-    width: 6vh;
-    background-color: red;
-    border-radius: 25%;
-    height: 1vh;
+    width: 2.5vh;
+    height: 2.5vh;
+    background-color: #fb0c1d;
+    border-radius: 50%;
 }
 
 #param2Color {
-    width: 6vh;
-    border-radius: 25%;
-    background-color: blue;
-    height: 1vh;
+    height: 2.5vh;
+    width: 2.5vh;
+    border-radius: 50%;
+    background-color: #0d0da3;
 }
 
 .paramColorContainer {
