@@ -95,33 +95,27 @@
     font-weight: bolder;
 }
 
-#scatterX {
-    position: absolute;
-    left: 25%;
+.scatterCircle{
+    fill-opacity: "0.6";
+    mix-blend-mode: darken;
 }
 
 .sankeyLinkTitle {
     text-align: center;
     border-radius: 5vh;
 }
-
-#scatterY {
-    position: absolute;
-    right: 25%;
-}
-
 #param1Color {
     width: 6vh;
+    background-color: red;
     border-radius: 25%;
     height: 1vh;
-    background-color: blue;
 }
 
 #param2Color {
     width: 6vh;
     border-radius: 25%;
+    background-color: blue;
     height: 1vh;
-    background-color: red;
 }
 
 .paramColorContainer {
