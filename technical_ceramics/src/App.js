@@ -4,7 +4,6 @@ import * as d3 from "d3";
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey'
 import data from './data.json'
 import chroma from "chroma-js";
-import { max } from 'd3';
 
 const { innerWidth: width, innerHeight: height } = window;
 const SankeyNode = ({ name, x0, x1, y0, y1, color }) => (
@@ -48,12 +47,11 @@ function App() {
   const max_width = (width > 800 ? 800 : width)
   const max_height = height > 500 ? 500 : height
   if (dataGraph) {
-    const layout = sankey()(dataGraph)
     const color = chroma.scale("Set3").classes(dataGraph.nodes.length);
     const colorScale = d3.scaleLinear()
       .domain([0, dataGraph.nodes.length])
       .range([0, 1]);
-    const { nodes, links } = sankey()
+    sankey()
       .nodeWidth(15)
       .nodePadding(10)
       .extent([[1, 1], [max_width - 1, height - 5]])
@@ -62,19 +60,19 @@ function App() {
         let bname = b.name;
         if (Number(a.name))
           aname = Number(a.name)
-        else if (a.name[a.name.length - 1] == "%")
+        else if (a.name[a.name.length - 1] === "%")
           aname = Number(a.name.substring(0, a.name.length - 1))
         if (Number(b.name))
           bname = Number(b.name)
-        else if (b.name[b.name.length - 1] == "%")
+        else if (b.name[b.name.length - 1] === "%")
           bname = Number(b.name.substring(0, b.name.length - 1))
         if (aname == bname)
           return 0;
         else if (aname < bname) return 1;
         else return -1
       })(dataGraph);
-      const param1domain = data.map(d => { return "" + d[param1] }).sort(function(a, b){return a - b}); 
-      const param2domain = data.map(d => { return "" + d[param2] }).sort(function(a, b){return a - b}); 
+    const param1domain = data.map(d => { return "" + d[param1] }).sort(function (a, b) { return a - b });
+    const param2domain = data.map(d => { return "" + d[param2] }).sort(function (a, b) { return a - b });
     const param1Scale = d3.scaleBand()
       .domain(param1domain)
       .range([10, max_height]);
@@ -133,8 +131,8 @@ function App() {
               </div>
               <select value={param1} className="ParamSelect" onChange={key => { setParam1(key.currentTarget.value) }}>
                 {Object.keys(data[0]).map((key, i) => {
-                  if (key != param2 && key != "RD (%)")
-                    return <option value={key} key={i}>{key}</option>
+                  if (key != param2 && key !== "RD (%)")
+                    return (<option value={key} key={i}>{key}</option>);
                 })
                 }
               </select>
@@ -148,8 +146,8 @@ function App() {
               </div>
               <select value={param2} className="ParamSelect" onChange={key => { setParam2(key.currentTarget.value) }}>
                 {Object.keys(data[0]).map((key, i) => {
-                  if (key != param1 && key != "RD (%)")
-                    return <option value={key} key={i}>{key}</option>
+                  if (key != param1 && key !== "RD (%)")
+                    return(<option value={key} key={i}>{key}</option>);
                 })
                 }
               </select>
@@ -168,7 +166,7 @@ function App() {
             <p className="GraphTitle">Scatter Plot</p>
           </div>
           <div className='Graph' >
-            <svg width={max_width+ 50} height={max_height + 50} >
+            <svg width={max_width + 50} height={max_height + 50} >
               <g >
 
                 <AxisRight param2Scale={param2Scale} width={max_width} />
@@ -207,7 +205,7 @@ function App() {
         </div>
         <div className='Footer'>
           <p className="IntroP">For more information consult the report: <a className='reportLink' href='https://iv.bearkillerpt.xyz/report.pdf'>Download</a></p>
-          
+
         </div>
       </div>
     );
@@ -230,7 +228,7 @@ const generateGraph = (sankeyNodes, output_var) => {
         continue
       let first = node[sankeyNodes[i]]
       let second = node[sankeyNodes[i + 1]]
-      if (first == "" || second == "")
+      if (first === "" || second === "")
         continue
 
       if (!(first_nodes.includes("" + first)))
@@ -290,7 +288,7 @@ function AxisLeft({ param1Scale, width }) {
       />
       <text
         style={{ fontSize: '1.5vh', fontWeight: 'bold' }}
-      
+
         x={textPadding}
         dy=".71em"
         y={param1Scale(d) - 6}
@@ -314,7 +312,7 @@ function AxisRight({ param2Scale, width }) {
       />
       <text
         style={{ fontSize: '1.5vh', fontWeight: 'bold' }}
-      
+
         x={textPadding}
         dy=".71em"
         y={param2Scale(d) - 5}
