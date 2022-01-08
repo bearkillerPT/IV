@@ -4,90 +4,8 @@ import * as d3 from "d3";
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey'
 import data from './data.json'
 import chroma from "chroma-js";
+import { max } from 'd3';
 
-const valueParams = [
-  "#",
-  "# old",
-  "Check",
-  "Year",
-  "1=Powder or 0=Suspension-based",
-  "UP Pressure (MPa)",
-  "CIP Pressure (MPa)",
-  "HIP (MPa)",
-  "HIP (1=yes or 0=no)",
-  "ND (mm)",
-  "Zr (vol.%)",
-  "Al (vol.%)",
-  "Zr + Al (vol.%)",
-  "0=Al or 1=Zr",
-  "PS Zr (μm)",
-  "PS Al (μm)",
-  "PS (μm)",
-  "Amount of zirconia dopant (mol.%)",
-  "Sloading (vol.%)",
-  "ST (ºC)",
-  "t (h)",
-  "LS (%)",
-  "s.d.",
-  "n",
-  "VS (%)",
-
-
-  "s.d..1",
-  "n.1",
-  "Gr Zr (μm)",
-  "s.d..2",
-  "n.2",
-  "Gr Al (μm)",
-  "s.d..3",
-  "n.3",
-  "E (GPa)",
-  "s.d..4",
-  "n.4",
-  
-  "H (GPa)",
-  "s.d..5",
-  "n.5",
-  
-  "Indentation load (N)",
-  "FS 3pt (MPa)",
-  "s.d..6",
-  "n.6",
-  "FS 4pt (MPa)",
-  "s.d..7",
-  "n.7",
-  "B3B (MPa)",
-  "s.d..8",
-  "n.8",
-  "Weibull (m)",
-  "s.d..9",
-  "n.9",
-  "ORIGINAL KIc média",
-  "ORIGINAL d.p.",
-  "KIc (MPa (m)^1",
-  "s.d..10",
-  "n.10",
-  "CTE (10-6 ºC-1)",
-  "s.d..11",
-  "n.11",
-  "K (W",
-  "s.d..12",
-  "n.12"
-]
-const categoryParams = ["Estudo",
-"Screening",
-"Technology Macro Group",
-"Technology",
-"Category",
-"PP Category",
-"CCT Category",
-"AM Category",
-"Additives",
-"Method E",
-"Method H",
-"Method KI",
-"Zirconia dopant",
-"Observações" ]
 const { innerWidth: width, innerHeight: height } = window;
 const SankeyNode = ({ name, x0, x1, y0, y1, color }) => (
   <>
@@ -286,6 +204,10 @@ function App() {
               </g>
             </svg>
           </div>
+        </div>
+        <div className='Footer'>
+          <p className="IntroP">For more information consult the report: <a className='reportLink' href='https://iv.bearkillerpt.xyz/report.pdf'>Download</a></p>
+          
         </div>
       </div>
     );
