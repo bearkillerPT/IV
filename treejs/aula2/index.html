@@ -5,7 +5,7 @@
     <meta charset='utf-8'>
     <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Aula 1</title>
+    <title>Aula 2</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' media='screen' href='styles.css'>
 </head>
@@ -22,15 +22,28 @@
         <div id="carWin" class="cubeWin">
             <p class="exampleTitle">Transformations Car</p>
         </div>
-        <div id="carRotationWin" class="cubeWin">
-            <p class="exampleTitle">Transformation Rotation Car</p>
+        <div class="cubeWin">
+            <div id="carAnimationWin">
+                <p class="exampleTitle">Transformation Rotation Car</p>
+            </div>
+            <div class="controls">
+
+                <div class="controlContainer">
+                    <p>Radius: </p>
+                    <input id="radiusInput" type="text" value="2" />
+                </div>
+                <div class="controlContainer">
+                    <p>Speed: </p>
+                    <input id="speedInput" type="text" value="0.01" />
+                </div>
+            </div>
         </div>
         
     </div>
 </body>
 <script src="sphere.js"></script>
 <script src="car.js"></script>
-<script src="carRotation.js"></script>
+<script src="carAnimation.js"></script>
 <script src="orthoCube.js"></script>
 
 </html>
